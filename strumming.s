@@ -1,7 +1,7 @@
-.equ LEGO 0xFF2000060
-.equ TIMER 0xFF202000
-.equ STACK 0x7FFFFFFF
-.equ HALF  0x003D0900
+.equ LEGO, 0xFF200060
+.equ TIMER, 0xFF202000
+.equ STACK, 0x7FFFFFFF
+.equ HALF,  0x003D0900
 .section .text
 
 .global _start
@@ -36,7 +36,8 @@ _start:
 loop:
 	br loop
 	
-.section .exceptions 'ax'
+.section .exceptions, "ax"
+
 ISR:
 	movia r8, (LEGO)
 	ldwio et, (r8)
