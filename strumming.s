@@ -3,7 +3,7 @@
 .equ STACK, 0x7FFFFFFF
 .equ HALF,  0x003D0900
 
-.section .exceptions
+.section .exceptions, "ax"
 ISR:
 #Clear timeout bit
 	movia r8, (TIMER)
