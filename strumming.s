@@ -5,6 +5,10 @@
 
 .section .exceptions
 ISR:
+#Clear timeout bit
+	movia r8, (TIMER)
+	stwio r0, (r8)
+	
 	movia r8, LEGO
 	ldwio et, (r8)
 	andi et, et, 0b010
@@ -13,12 +17,14 @@ ISR:
 setforward:
 	ldwio et, (r8)
 	andi et, et, 0b1101
+	stwio et, (r8)
 	br done
 	
 setreverse:
 	ldwio et, (r8)
 	andi et, et, 0b1101
-
+	stwio et, (r8)
+	
 done:
 	subi ea, ea, 4
 	eret
