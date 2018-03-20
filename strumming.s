@@ -1,7 +1,7 @@
 .equ LEGO, 0xFF200060
 .equ TIMER, 0xFF202000
 .equ STACK, 0x7FFFFFFF
-.equ HALF,  0x003D0900
+.equ HALF,  2000000
 
 .section .exceptions, "ax"
 ISR:
