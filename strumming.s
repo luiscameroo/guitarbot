@@ -40,6 +40,11 @@ loop:
 .section .exceptions, "ax"
 
 ISR:
+#Clear timeout bit
+    movia r8, (TIMER)
+    stwio r0, (r8)
+
+#Lego Stuff
 	movia r8, (LEGO)
 	ldwio et, (r8)
 	andi et, et, 0b010
