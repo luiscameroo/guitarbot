@@ -5,6 +5,7 @@
 .section .text
 
 .global _start
+
 _start:
 	#Initialize Motors 
 	movia r8, (LEGO)
@@ -48,6 +49,11 @@ setforward:
 	ldwio et, (r8)
 	andi et, et, 0b1101
 	br done
-
+	
+setreverse:
+	
+done:
+	subi ea, ea, 4
+	eret
 
 	
