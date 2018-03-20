@@ -16,13 +16,13 @@ ISR:
 
 setforward:
 	ldwio et, (r8)
-	andi et, et, 0b1101
+	andi et, et, 0xFFFD
 	stwio et, (r8)
 	br done
 	
 setreverse:
 	ldwio et, (r8)
-	andi et, et, 0b1101
+	ori et, et, 0x0002
 	stwio et, (r8)
 	
 done:
@@ -39,7 +39,7 @@ _start:
 	movia r9, 0x07F557FF
 	stwio r9, 4(r8)
 	
-	movi r9, 0b0011 #TURN MOTOR OFF
+	movi r9, 0b0010 #TURN MOTOR OFF
 	stwio r9, (r8)
 	
 	#Initialize Timer
