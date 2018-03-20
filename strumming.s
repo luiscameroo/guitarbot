@@ -6,7 +6,7 @@
 .section .exceptions, "ax"
 ISR:
 #Clear timeout bit
-	movia r8, (TIMER)
+	movia r8, TIMER
 	stwio r0, (r8)
 	
 	movia r8, LEGO
