@@ -32,17 +32,14 @@ chord_down:
     movia r16, LEGO
 
 # set motor to forward, on (preserve other info)
-    ldw r17, (r16)
+    ldwio r17, (r16)
     andi r17, r17, 0xFFF3 #(....0011)
     stwio r17, (r16)
 
     movia r18, TIMER1
     movia r19, PRESS_TIME
 
-poll_to_STOP: #poll timer1 to see if it is equal to or has exceeded PRESS_TIME.
-    ldw r20, (r16)
-    bge r20, r17, chord_down_stop
-    br poll_to_STOP
+    call poll_to_STOP
 
 chord_down_stop:
     addi r17, r17, 0x04
@@ -61,11 +58,27 @@ chord_up:
     movia r16, LEGO
 
 # set motor to reverse, on (preserve other info)
-    ldw r17, (r16)
+    ldwio r17, (r16)
     andi r17, r17, 0xFFFB #(....1011)
     stwio r17, (r16)
 
+    call poll_to_STOP
+
+chord_up_stop:
+    addi r17, r17, 0x04
+    stwio r17, (r16)
+
 # return to previous
+    ret
+
+poll_to_STOP: #poll timer1 to see if it is equal to or has exceeded PRESS_TIME.
+    stwio r0, 16(r18)
+    ldwio r20, 16(r18)
+    stwio r0, 20(r18)
+    ldwio r21, 20(r8)
+    slli r21, 16
+    or r20, r20, r21
+    blt r20, r19, poll_to_STOP
     ret
 
 
