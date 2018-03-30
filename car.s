@@ -13,3 +13,14 @@
 .equ FRET6_TIME, 0x00
 .equ FRET7_TIME, 0x00
 
+#=== CAR MODULES ===#
+
+.section .text
+
+.global car_forward
+car_forward:
+
+.global car_reverse
+car_reverse:
+
+
