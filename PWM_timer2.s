@@ -7,6 +7,7 @@
 #------ MOTOR TIMING ------#
 .equ PWM_UP 0x00 #Currently uninitialized.
 .equ PWM_DOWN 0x00 #Currently uninitialized.
+.equ PWM_TOTAL 100000000
 
 ####################################
 #=== PWM MODULE ===#

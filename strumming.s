@@ -10,6 +10,14 @@
 .equ X_PWM,  2000000
 .equ Y_PWM,  2000000
 
+#=== DATA SECTION ===#
+
+.section .data
+
+PWM_FLAG: .long 0x0 # reserve area in memory for checking whether power is on or off.
+
+
+
 ####################################
 #============ INTERRUPT ===========#
 
