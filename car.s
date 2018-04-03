@@ -7,25 +7,35 @@
 #------ MOTOR TIMING ------#
 .equ car_move_time, 200000000 #200 million (2sec)
 .equ press_time, 50000000 #50 million (0.5sec) [this is tbd tho styll, fam]
-
+.equ PWM_ON, 30000
+.equ PWM_OFF, 70000
 
 #=== INTERRUPT HANDLER ===#
 #NOTE: this is exclusive to timer1 for car.
 .section .exceptions, "ax"
 ISR:
-#clear timeout bit
+
+check_ISR:
+
+    subi sp, sp, 20
+    stw r8, 16(sp)
+    stw et, et, 12(sp)
+    stw r9, 8(sp)
+    stw ea, 4(sp)
+    rdctl r8, ctl1
+    stw r8, (sp)
+
+    rdctl r8, ctl4
+
+timer1_int:
     movia et, TIMER1
     stwio r0, et
-#initialize timer 1 with press_time
-#enable interrupts, turn on timer, run once until timeout bit
     movui r9, 0b101
     stwio r9, 4(et)
 
 ISR_done:
     eret
 
-
-turn_off_motor2:
 
 #=== DATA ===#
 .section .data
@@ -44,6 +54,12 @@ _start:
 initialize_stack:
     movia sp, STACK
 
+initialize_interrupts:
+    addi r8, r8, 1
+    wrctl ctl0, r8
+    addi r8, r8, 4
+    wrctl ctl3, r8
+
 initialize_motor2: #it is the 3rd motor associated with the car.
     movia r8, LEGO
 #Parellel port- setting to default
@@ -53,20 +69,32 @@ initialize_motor2: #it is the 3rd motor associated with the car.
     movi r9, 0b000101
     stw r9, (r8)
 
+
 initialize_timer1:
     movia r8, TIMER1
 #load car_move_time into timer (2 seconds)
 #load low 16 bits
     movia r9, %lo(car_move_time)
-    andi r9, r9, 0xFFFF
     stwio r9, 8(r8)
 #load top 16 bits
     movia r9, %hi(car_move_time)
-    andi r9, r9, 0xFFFF
     stwio r9, 12(r8)
 #enable interrupts, turn on timer, run once until timeout bit
     movui r9, 0b101
     stwio r9, 4(r8)
+
+initialize_timer2:
+    movui r9, %lo(PWM_ON)
+    stwio r9, 8(r8)
+
+    movui r9, %hi(PWM_ON)
+    stwio r9, 12(r8)
+
+    stwio r0, (r8)
+
+    movui r9, 0b0101
+    stwio r9, 4(r8)
+
 
 loop:
     br loop
