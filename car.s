@@ -17,17 +17,9 @@ ISR:
     movia et, TIMER1
     stwio r0, et
 #initialize timer 1 with press_time
-#load low 16 bits
-    movia r8, %lo(car_move_time)
-    andi r8, r8, 0xFFFF
-    stwio r8, 8(et)
-#load top 16 bits
-    movia r8, %hi(car_move_time)
-    andi r8, r8, 0xFFFF
-    stwio r8, 12(et)
 #enable interrupts, turn on timer, run once until timeout bit
     movui r9, 0b101
-    stwio r9, 4(r8)
+    stwio r9, 4(et)
 
 ISR_done:
     eret
