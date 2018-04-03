@@ -6,7 +6,7 @@
 
 #------ MOTOR TIMING ------#
 .equ car_move_time, 200000000 #200 million (2sec)
-.equ press_time, 25000000 #25 million (0.25sec) [this is tbd tho styll, fam]
+.equ press_time, 10000000 #10 million (0.1sec) [this is tbd tho styll, fam]
 
 #=== INTERRUPT HANDLER ===#
 .section .exceptions, "ax"
