@@ -5,7 +5,8 @@
 .equ STACK, 0x7FFFFFFF
 
 #------ MOTOR TIMING ------#
-.equ car_move_time, 200000000 #200 million
+.equ car_move_time, 200000000 #200 million (2sec)
+.equ press_time, 50000000 #50 million (0.5sec)
 
 
 #=== INTERRUPT HANDLER ===#
@@ -17,7 +18,15 @@ ISR:
     stwio r0, et
 
 turn_off_motor2:
-    
+
+#=== DATA ===#
+.section .data
+
+#flags below; initialize all to 0 at the beginning.
+is_strumming: .word 0x0
+is_moving: .word 0x0
+is_pressing: .word 0x0
+
 
 .section .text
 .global _start
