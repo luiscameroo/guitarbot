@@ -2,7 +2,7 @@
 .equ LEGO, 0xFF200060 #Use Motor 1 of lego controller
 .equ TIMER1, 0xFF202000
 .equ TIMER2, 0xFF202020
-.equ STACK, 0x7FFFFFFF
+.equ STACK, 0x2000
 
 #------ MOTOR TIMING ------#
 .equ car_move_time, 200000000 #200 million (2sec)
@@ -19,7 +19,7 @@ check_ISR:
 
     subi sp, sp, 20
     stw r8, 16(sp)
-    stw et, et, 12(sp)
+    stw et, 12(sp)
     stw r9, 8(sp)
     stw ea, 4(sp)
     rdctl r8, ctl1
@@ -30,7 +30,7 @@ check_ISR:
     beq r0, et, timer2_int
 
 timer1_int:
-    movia et, LEGO
+    movia et, TIMER1
     stwio r0, (et)
 
     movia r8, LEGO
@@ -77,6 +77,25 @@ on:
     movui et, 0b0101
     stwio et, 4(r8)
 
+	br done
+	
+off:
+    ldwio et, (r8)
+    ori et, et, 0x0010
+    stwio et, (r8)
+
+    movia r8, TIMER2
+
+    stwio r0, (r8)
+    movui et, %lo(PWM_OFF)
+    stwio et, 8(r8)
+
+    movui et, %hi(PWM_OFF)
+    stwio et, 12(r8)
+
+    movui et, 0b0101
+    stwio et, 4(r8)
+
 done:
     wrctl status, r0
     movui et, 0b0101
@@ -85,11 +104,13 @@ done:
     ldw r8, (sp)
     wrctl ctl1, r8
     ldw r8, 16(sp)
-    ldw et, et, 12(sp)
+    ldw et, 12(sp)
     ldw r9, 8(sp)
     ldw ea, 4(sp)
     addi sp, sp, 20
-
+	subi ea, ea, 4
+	
+	eret
 
 
 
@@ -114,7 +135,7 @@ initialize_stack:
 initialize_interrupts:
     addi r8, r8, 1
     wrctl ctl0, r8
-    addi r8, r8, 4
+    movi r8, 0b0101
     wrctl ctl3, r8
 
 initialize_motor2: #it is the 3rd motor associated with the car.
@@ -131,13 +152,13 @@ initialize_timer1:
     movia r8, TIMER1
 #load car_move_time into timer (2 seconds)
 #load low 16 bits
-    movia r9, %lo(car_move_time)
+    movui r9, %lo(car_move_time)
     stwio r9, 8(r8)
 #load top 16 bits
-    movia r9, %hi(car_move_time)
+    movui r9, %hi(car_move_time)
     stwio r9, 12(r8)
 #enable interrupts, turn on timer, run once until timeout bit
-    movui r9, 0b101
+    movui r9, 0b111
     stwio r9, 4(r8)
 
 initialize_timer2:
