@@ -26,6 +26,7 @@ ISR:
     ldw r9, 4(sp)
     stw r8, (sp)
     addi sp, sp, 8
+
     subi ea, ea, 4
     eret
 
@@ -68,6 +69,8 @@ initialize_timer1:
 #enable interrupts, turn on timer, run once until timeout bit
     movui r9, 0b101
     stwio r9, 4(r8)
+
+initialize_timer2:
 
 loop:
     br loop
