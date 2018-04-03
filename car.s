@@ -6,7 +6,7 @@
 
 #------ MOTOR TIMING ------#
 .equ car_move_time, 200000000 #200 million (2sec)
-.equ press_time, 50000000 #50 million (0.5sec)
+.equ press_time, 50000000 #50 million (0.5sec) [this is tbd tho styll, fam]
 
 
 #=== INTERRUPT HANDLER ===#
@@ -16,6 +16,22 @@ ISR:
 #clear timeout bit
     movia et, TIMER1
     stwio r0, et
+#initialize timer 1 with press_time
+#load low 16 bits
+    movia r8, %lo(car_move_time)
+    andi r8, r8, 0xFFFF
+    stwio r8, 8(et)
+#load top 16 bits
+    movia r8, %hi(car_move_time)
+    andi r8, r8, 0xFFFF
+    stwio r8, 12(et)
+#enable interrupts, turn on timer, run once until timeout bit
+    movui r9, 0b101
+    stwio r9, 4(r8)
+
+ISR_done:
+    eret
+
 
 turn_off_motor2:
 
