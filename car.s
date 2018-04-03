@@ -35,10 +35,62 @@ timer1_int:
 
     movia r8, LEGO
     ldwio et, (r8)
-    andi et, et, 0b0010
+    andi et, et, 0b0100000
+    beq r0, et, reverse
 
+forward:
+    movia et, 0xFFFFFFCF
+    stwio et, (r8)
+    br done
+
+reverse:
+    movia et, 0xFFFFFFEF
+    stwio et, (r8)
+    br done
 
 timer2_int:
+    movui et, 0x1
+    wrctl ctl3, et
+    wrctl status, et
+
+    movia r8, LEGO
+
+    ldwio et, (r8)
+    andi et, et, 0b010000
+
+    beq r0, et, off
+
+on:
+    ldwio et, (r8)
+    andi et, et, 0xFFEF
+    stwio et, (r8)
+
+    movia r8, TIMER2
+
+    stwio r0, (r8)
+    movui et, %lo(PWM_ON)
+    stwio et, 8(r8)
+
+    movui et, %hi(PWM_ON)
+    stwio et, 12(r8)
+
+    movui et, 0b0101
+    stwio et, 4(r8)
+
+done:
+    wrctl status, r0
+    movui et, 0b0101
+    wrctl ctl3, et
+
+    ldw r8, (sp)
+    wrctl ctl1, r8
+    ldw r8, 16(sp)
+    ldw et, et, 12(sp)
+    ldw r9, 8(sp)
+    ldw ea, 4(sp)
+    addi sp, sp, 20
+
+
 
 
 
