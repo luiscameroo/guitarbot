@@ -25,16 +25,21 @@ check_ISR:
     rdctl r8, ctl1
     stw r8, (sp)
 
-    rdctl r8, ctl4
+    rdctl et, ctl4
+    andi et, et, 0b01
+    beq r0, et, timer2_int
 
 timer1_int:
-    movia et, TIMER1
-    stwio r0, et
-    movui r9, 0b101
-    stwio r9, 4(et)
+    movia et, LEGO
+    stwio r0, (et)
 
-ISR_done:
-    eret
+    movia r8, LEGO
+    ldwio et, (r8)
+    andi et, et, 0b0010
+
+
+timer2_int:
+
 
 
 #=== DATA ===#
@@ -84,6 +89,7 @@ initialize_timer1:
     stwio r9, 4(r8)
 
 initialize_timer2:
+    movia r8, TIMER2
     movui r9, %lo(PWM_ON)
     stwio r9, 8(r8)
 
