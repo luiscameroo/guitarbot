@@ -91,7 +91,7 @@ initialize_timer2:
 	movia r8, TIMER2
 
 enable_interrupts:
-	movui r9, 0b0101
+	movui r9, 0b0100
 	wrctl ctl3, r9
 	
 	movui r9, 0b0001
