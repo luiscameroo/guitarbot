@@ -66,14 +66,14 @@ read_keyboard:
 #byte1 = byte2;
     movia r9, byte1
     movia r11, byte2
-    ldw r12, (byte2)
-    stw r12, (byte1)
+    ldw r12, (r11)
+    stw r12, (r9)
 #byte2 = byte3;
     movia r9, byte3
-    ldw r12, (byte3)
-    stw r12, (byte2)
+    ldw r12, (r9)
+    stw r12, (r11)
 #byte3 = data_read;
-    stw r10, (byte3)
+    stw r10, (r9)
 
     addi r2, r2, 1
     br done_read_keyboard
