@@ -54,11 +54,25 @@ read_keyboard:
     ldw r9, (r8)
     andi r10, r9, 0x08000
     beq r0, r10, read_invalid
-    andi r2, r9, 0x0FF
-    addi r3, r3, 1
+    andi r10, r9, 0x0FF
+#shift bytes read from keyboard
+
+#byte1 = byte2;
+    movia r9, byte1
+    movia r11, byte2
+    ldw r12, (byte2)
+    stw r12, (byte1)
+#byte2 = byte3;
+    movia r9, byte3
+    ldw r12, (byte3)
+    stw r12, (byte2)
+#byte3 = data_read;
+    stw r10, (byte3)
+
+    addi r2, r2, 1
     br done_read_keyboard
 read_invalid:
-    mov r3, r0
+    mov r2, r0
 done_read_keyboard:
     ret
 
