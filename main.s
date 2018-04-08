@@ -33,12 +33,6 @@ PWM_FLAG: .word 0x0 # reserve area in memory for checking whether power is on or
 .section .exceptions, "ax"
 ISR:
 
-#=== PROGRAM INSTRUCTIONS ===#
-.section .text
-
-.global _start
-_start:
-
 timer1_int:
     call timer1_subroutine
 
@@ -52,7 +46,14 @@ keyboard_int:
 ISR_done:
 
     subi ea ea, 4
-    eret
+e   ret
+
+#=== PROGRAM INSTRUCTIONS ===#
+.section .text
+
+.global _start
+_start:
+
 #=== initializations ===#
 
 
