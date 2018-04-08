@@ -17,6 +17,12 @@
 
 #=== DATA ===#
 .section .data
+.align 1
+goat: .incbin "image/paul_de_raw.raw"
+default: .incbin "image/default.raw"
+chordA: .incbin "image/chordA.raw"
+chordF: .incbin "image/chordF.raw"
+chordG: .incbin "image/chordG.raw"
 
 .align 2
 
@@ -53,6 +59,9 @@ ISR_done:
 
 .global _start
 _start:
+	movia r4, goat
+	drawscreen
+loop: br loop
 
 #=== initializations ===#
 

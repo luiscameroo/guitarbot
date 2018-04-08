@@ -1,25 +1,15 @@
 .equ ADDR_VGA, 0x08000000
-.equ ADDR_CHAR, 0x09000000
 .equ WIDTH, 320
 .equ HEIGHT, 240
 .equ BYTES_PER_ROW, 10 #log2(1024)
 .equ BYTES_PER_PIXEL, 1 #log2(2)
 .equ STACK, 0x00002000
 
-.section .data
-.align 1
-goat: .incbin "paul_de_raw.raw"
-default: .incbin "default.raw"
-chordA: .incbin "chordA.raw"
-chordF: .incbin "chordF.raw"
-chordG: .incbin "chordG.raw"
 
 .section .text
 .global drawscreen 
 
 drawscreen:
-	movia r4, chordF
-	movia sp, STACK
 	subi sp, sp, 24
     stw r16, 0(sp)		# Save some registers
     stw r17, 4(sp)
@@ -51,7 +41,7 @@ drawscreen:
     ldw r17, 4(sp)
     ldw r16, 0(sp)    
     addi sp, sp, 24
-loop: br loop
+	ret
 
 DrawPixel:
 	movi r2, BYTES_PER_ROW		# log2(bytes per row)
