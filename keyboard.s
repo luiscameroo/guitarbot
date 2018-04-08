@@ -19,7 +19,7 @@ byte3: .long 0x0
 
 
 #=== INTERRUPT SERVICE ROUTINE ===#
-.section . exceptions, "ax"
+.section .exceptions, "ax"
 ISR:
     subi sp, sp, 8
     stw r8, 4(sp)
