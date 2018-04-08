@@ -13,9 +13,9 @@
 
 .align 2
 
-byte1: .word, 0x0
-byte2: .word, 0x0
-byte3: .word, 0x0
+byte1: .long 0x0
+byte2: .long 0x0
+byte3: .long 0x0
 
 
 #=== INTERRUPT SERVICE ROUTINE ===#
