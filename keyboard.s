@@ -21,7 +21,8 @@ byte3: .word, 0x0
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section . exceptions, "ax"
 ISR:
-    
+    call read_keyboard
+
 
 
 #=== PROGRAM INSTRUCTIONS ===#
@@ -52,8 +53,12 @@ read_keyboard:
     movia r8, 1PS2
     ldw r9, (r8)
     andi r10, r9, 0x08000
-    beq r0, r10, done_read_keyboard
+    beq r0, r10, read_invalid
     andi r2, r9, 0x0FF
+    addi r3, r3, 1
+    br done_read_keyboard
+read_invalid:
+    mov r3, r0
 done_read_keyboard:
     ret
 
