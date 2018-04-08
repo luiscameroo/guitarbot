@@ -40,6 +40,10 @@ timer1_int:
 timer2_int:
     call timer2_subroutine
 
+VGA_int:
+
+keyboard_int:
+
 ISR_done:
 
     subi ea ea, 4
