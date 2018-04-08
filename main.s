@@ -24,6 +24,11 @@ byte1: .long 0x0
 byte2: .long 0x0
 byte3: .long 0x0
 
+pwm_x_counter: .word 0x000000 #Ratio of Duty Cycle, if 0 then always on,
+pwm_y_counter: .word 0x000000 #if 1 then half the time, if 2 then third of the time
+
+PWM_FLAG: .word 0x0 # reserve area in memory for checking whether power is on or off.
+
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
 ISR:
