@@ -48,7 +48,7 @@ _start:
 
 #initialize keyboard interrupts (write 1 to 1st bit of control register)
     movia r8, PS201
-    stw r9, 4(r8)
+    stwio r9, 4(r8)
 
 done:
     br done
@@ -57,7 +57,7 @@ done:
 #might return a boolean in r3? (indicating whether read was valid but should be unnecessary in interrupts).
 read_keyboard:
     movia r8, PS201
-    ldw r9, (r8)
+    ldwio r9, (r8)
     andi r10, r9, 0x08000
     beq r0, r10, read_invalid
     andi r10, r9, 0x0FF
