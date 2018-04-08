@@ -46,7 +46,7 @@ keyboard_int:
 ISR_done:
 
     subi ea ea, 4
-e   ret
+    gieret
 
 #=== PROGRAM INSTRUCTIONS ===#
 .section .text
