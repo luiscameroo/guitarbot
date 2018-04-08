@@ -95,6 +95,34 @@ timer2_done:
     ret
 
 # TIMER1 STRUM SUBROUTINE #
+#warning: same as timer2
+timer1_int:
+#Clear timeout bit
+    movia r8, TIMER1
+    stwio r0, (r8)
+
+    addi et, et, 0x1 #enable interrupts (nested)
+    wrctl ctl0, et
+
+
+    movia r8, LEGO
+    ldwio et, (r8)
+    andi et, et, 0b010
+    beq et, r0, setreverse
+
+setforward:
+    ldwio et, (r8)
+    andi et, et, 0xFFFD
+    stwio et, (r8)
+    br done
+
+setreverse:
+    ldwio et, (r8)
+    ori et, et, 0x0002
+    stwio et, (r8)
+
+timer1_done:
+    ret
 
 # VGA SUBROUTINE #
 
