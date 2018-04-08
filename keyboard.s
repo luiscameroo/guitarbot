@@ -27,6 +27,7 @@ ISR:
     call read_keyboard
     ldw r8, 4(sp)
     stw r9, (sp)
+    addi sp, sp, 8
     eret
 
 
