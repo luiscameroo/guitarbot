@@ -26,6 +26,7 @@
 #=== DATA ===#
 .section .data
 .align 1
+
 goat: .incbin "image/paul_de_raw.raw"
 default: .incbin "image/default.raw"
 chordA: .incbin "image/chordA.raw"
