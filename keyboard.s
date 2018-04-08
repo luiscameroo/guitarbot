@@ -24,9 +24,15 @@
 #initialize stack
 movia sp, STACK
 
+#enable interrupts (add keyboard to IRQ line)
+addi r9, r9, 0b010000000
+wrctl ctl3, r9
+
+movi r9, 0b01
+wrctl ctl0, r9
+
 #initialize keyboard interrupts (write 1 to 1st bit of control register)
 movia r8, 1PS2
-addi r9, r9, 1
 stw r9, 4(r8)
 
 
