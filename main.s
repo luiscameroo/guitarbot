@@ -15,6 +15,14 @@
 .equ PWM_ON, 50000000
 .equ PWM_OFF, 50000000
 
+#=== VGA EQU'S ===#
+.equ ADDR_VGA, 0x08000000
+.equ ADDR_CHAR, 0x09000000
+.equ WIDTH, 320
+.equ HEIGHT, 240
+.equ BYTES_PER_ROW, 10 #log2(1024)
+.equ BYTES_PER_PIXEL, 1 #log2(2)
+
 #=== DATA ===#
 .section .data
 
@@ -46,7 +54,7 @@ keyboard_int:
 ISR_done:
 
     subi ea ea, 4
-    gieret
+    eret
 
 #=== PROGRAM INSTRUCTIONS ===#
 .section .text
