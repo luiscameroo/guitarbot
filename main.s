@@ -7,6 +7,14 @@
 .equ STACK, 0x00002000
 .equ PS201, 0xFF200100
 
+#------ MOTOR TIMING ------#
+.equ X_MOVE,  2000000
+.equ Y_MOVE,  2000000
+.equ X_PWM,  2000000
+.equ Y_PWM,  2000000
+.equ PWM_ON, 50000000
+.equ PWM_OFF, 50000000
+
 #=== DATA ===#
 .section .data
 
