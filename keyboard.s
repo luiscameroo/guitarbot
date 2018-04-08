@@ -22,22 +22,24 @@ byte3: .long 0x0
 .section .exceptions, "ax"
 ISR:
 #save registers
-    subi sp, sp, 20
-    stw r8, 16(sp)
-    stw r9, 12(sp)
-    stw r10, 8(sp)
-    stw r11, 4(sp)
+    subi sp, sp, 24
+    stw r8, 20(sp)
+    stw r9, 16(sp)
+    stw r10, 12(sp)
+    stw r11, 8(sp)
+    stw r12, 4(sp)
     stw ra, (sp)
 
     call read_keyboard
 
 #reload registers
-    ldw r8, 16(sp)
-    ldw r9, 12(sp)
-    ldw r10, 8(sp)
-    ldw r11, 4(sp)
+    ldw r8, 20(sp)
+    ldw r9, 16(sp)
+    ldw r10, 12(sp)
+    ldw r11, 8(sp)
+    ldw r12, 4(sp)
     ldw ra, (sp)
-    addi sp, sp, 20
+    addi sp, sp, 24
     subi ea, ea, 4
     eret
 
