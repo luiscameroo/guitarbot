@@ -21,7 +21,13 @@ byte3: .word, 0x0
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section . exceptions, "ax"
 ISR:
+    subi sp, sp, 8
+    stw r8, 4(sp)
+    stw r9, (sp)
     call read_keyboard
+    ldw r8, 4(sp)
+    stw r9, (sp)
+    eret
 
 
 
