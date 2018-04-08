@@ -28,6 +28,7 @@ ISR:
     ldw r8, 4(sp)
     ldw r9, (sp)
     addi sp, sp, 8
+    subi ea, ea, 4
     eret
 
 
