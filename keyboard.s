@@ -21,13 +21,23 @@ byte3: .long 0x0
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
 ISR:
-    subi sp, sp, 8
-    stw r8, 4(sp)
-    stw r9, (sp)
+#save registers
+    subi sp, sp, 20
+    stw r8, 16(sp)
+    stw r9, 12(sp)
+    stw r10, 8(sp)
+    stw r11, 4(sp)
+    stw ra, (sp)
+
     call read_keyboard
-    ldw r8, 4(sp)
-    ldw r9, (sp)
-    addi sp, sp, 8
+
+#reload registers
+    ldw r8, 16(sp)
+    ldw r9, 12(sp)
+    ldw r10, 8(sp)
+    ldw r11, 4(sp)
+    ldw ra, (sp)
+    addi sp, sp, 20
     subi ea, ea, 4
     eret
 
@@ -76,8 +86,6 @@ read_keyboard:
     stw r12, (r11)
 #byte3 = data_read;
     stw r10, (r9)
-
-    addi r2, r2, 1
     br done_read_keyboard
 read_invalid:
     mov r2, r0
