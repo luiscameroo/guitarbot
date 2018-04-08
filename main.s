@@ -34,6 +34,16 @@ ISR:
 .global _start
 _start:
 
+timer1_int:
+    call timer1_subroutine
+
+timer2_int:
+    call timer2_subroutine
+
+ISR_done:
+
+    subi ea ea, 4
+    eret
 #=== initializations ===#
 
 
@@ -70,7 +80,7 @@ done_read_keyboard:
 
 # TIMER2 PWM SUBROUTINE #
 #warning: copied from strumming.s ISR section, may need to format as correct subroutine
-timer2_int:
+timer2_subroutine:
     movia r8, TIMER2 #clear timeout bit
     stwio r0, (r8)
     movia r8, PWM_FLAG #check bit of PWM_FLAG
@@ -96,7 +106,7 @@ timer2_done:
 
 # TIMER1 STRUM SUBROUTINE #
 #warning: same as timer2
-timer1_int:
+timer1_subroutine:
 #Clear timeout bit
     movia r8, TIMER1
     stwio r0, (r8)
