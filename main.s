@@ -62,6 +62,11 @@ ISR:
     stw r12, 4(sp)
     stw ra, (sp)
 
+    rdctl r16, ipending
+    andi r17, r16, 0b01
+    beq r17, r0,
+
+
 timer1_int:
     call timer1_subroutine
 
