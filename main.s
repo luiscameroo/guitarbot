@@ -108,7 +108,14 @@ draw_P:
 keyboard_done:
 
 ISR_done:
-    
+    ldw r8, 20(sp)
+    ldw r9, 16(sp)
+    ldw r10, 12(sp)
+    ldw r11, 8(sp)
+    ldw r12, 4(sp)
+    ldw ra, (sp)
+
+    addi sp, sp, 24
 
     subi ea, ea, 4
     eret
