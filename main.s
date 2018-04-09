@@ -99,7 +99,7 @@ draw_G:
 
 draw_P:
     movia r4, goat
-    call drwscreen
+    call drawscreen
 
 keyboard_done:
 
