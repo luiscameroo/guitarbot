@@ -4,7 +4,7 @@
 .equ LEGO, 0xFF200060
 .equ TIMER1, 0xFF202000
 .equ TIMER2, 0xFF202020
-.equ STACK, 0x00002000
+.equ STACK, 0x03FFFFFC
 .equ PS201, 0xFF200100
 
 #------ MOTOR TIMING ------#
@@ -14,14 +14,6 @@
 .equ Y_PWM,  2000000
 .equ PWM_ON, 50000000
 .equ PWM_OFF, 50000000
-
-#=== VGA EQU'S ===#
-.equ ADDR_VGA, 0x08000000
-.equ ADDR_CHAR, 0x09000000
-.equ WIDTH, 320
-.equ HEIGHT, 240
-.equ BYTES_PER_ROW, 10 #log2(1024)
-.equ BYTES_PER_PIXEL, 1 #log2(2)
 
 #=== KEYBOARD EQU'S ===#
 .equ BREAK, 0x0f0
@@ -110,7 +102,7 @@ keyboard_done:
 
 ISR_done:
 
-    subi ea ea, 4
+    subi ea, ea, 4
     eret
 
 #=== PROGRAM INSTRUCTIONS ===#
@@ -118,8 +110,9 @@ ISR_done:
 
 .global _start
 _start:
+	movia sp, STACK
 	movia r4, goat
-	drawscreen
+	call drawscreen
 loop: br loop
 
 #=== initializations ===#
@@ -202,7 +195,7 @@ setforward:
     ldwio et, (r8)
     andi et, et, 0xFFFD
     stwio et, (r8)
-    br done
+    br timer1_done
 
 setreverse:
     ldwio et, (r8)

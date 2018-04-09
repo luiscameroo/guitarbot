@@ -3,8 +3,6 @@
 .equ HEIGHT, 240
 .equ BYTES_PER_ROW, 10 #log2(1024)
 .equ BYTES_PER_PIXEL, 1 #log2(2)
-.equ STACK, 0x00002000
-
 
 .section .text
 .global drawscreen 
@@ -32,7 +30,7 @@ drawscreen:
             subi r17, r17, 1
             bne r17, r0, 2b
         subi r16, r16, 1
-        bge r16, r0, 1b
+        bne r16, r0, 1b
     
     ldw ra, 20(sp)
 	ldw r20, 16(sp)
