@@ -23,6 +23,12 @@
 .equ BYTES_PER_ROW, 10 #log2(1024)
 .equ BYTES_PER_PIXEL, 1 #log2(2)
 
+#=== KEYBOARD EQU'S ===#
+.equ BREAK, 0x0f0
+.equ MAKEA, 0x01c
+.equ MAKEF, 0x02b
+.equ MAKEG, 0x034
+
 #=== DATA ===#
 .section .data
 .align 1
@@ -47,6 +53,13 @@ PWM_FLAG: .word 0x0 # reserve area in memory for checking whether power is on or
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
 ISR:
+    subi sp, sp, 24
+    stw r8, 20(sp)
+    stw r9, 16(sp)
+    stw r10, 12(sp)
+    stw r11, 8(sp)
+    stw r12, 4(sp)
+    stw ra, (sp)
 
 timer1_int:
     call timer1_subroutine
@@ -54,9 +67,33 @@ timer1_int:
 timer2_int:
     call timer2_subroutine
 
-VGA_int:
-
 keyboard_int:
+    call read_keyboard
+    movia et, byte3
+    ldw r8, (et)
+    movia r9, MAKEA
+    beq r8, r9, draw_A
+    movia r9, MAKEF
+    beq r8, r9, draw_F
+    movia r9, MAKEG
+    beq r8, r9, draw_G
+    br keyboard_done
+
+draw_A:
+    movia r4, chordA
+    call drawscreen
+    br keyboard_done
+
+draw_F:
+    movia r4, chordF
+    call drawscreen
+    br keyboard_done
+
+draw_G:
+    movia r4, chordG
+    call drawscreen
+
+keyboard_done:
 
 ISR_done:
 
