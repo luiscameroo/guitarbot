@@ -125,6 +125,9 @@ _start:
 	movui r8, 0b00000001
 	wrctl ctl0, r8
 	
+	movia r9, PS201
+	stwio r8, 4(r9)
+	
 	movia r4, default
 	call drawscreen
 #=== end main ===#
