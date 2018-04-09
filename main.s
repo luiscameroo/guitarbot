@@ -46,7 +46,8 @@ PWM_FLAG: .word 0x0 # reserve area in memory for checking whether power is on or
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
 ISR:
-    subi sp, sp, 24
+    subi sp, sp, 28
+    stw r6, 24(sp)
     stw r8, 20(sp)
     stw r9, 16(sp)
     stw r10, 12(sp)
@@ -108,6 +109,7 @@ draw_P:
 keyboard_done:
 
 ISR_done:
+    ldw r6, 24(sp)
     ldw r8, 20(sp)
     ldw r9, 16(sp)
     ldw r10, 12(sp)
@@ -115,7 +117,7 @@ ISR_done:
     ldw r12, 4(sp)
     ldw ra, (sp)
 
-    addi sp, sp, 24
+    addi sp, sp, 28
 
     subi ea, ea, 4
     eret
