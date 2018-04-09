@@ -28,6 +28,7 @@
 .equ MAKEA, 0x01c
 .equ MAKEF, 0x02b
 .equ MAKEG, 0x034
+.equ MAKEP, 0x04d
 
 #=== DATA ===#
 .section .data
@@ -77,6 +78,8 @@ keyboard_int:
     beq r8, r9, draw_F
     movia r9, MAKEG
     beq r8, r9, draw_G
+    movia r9, MAKEP
+    beq r8, r8, draw_P
     br keyboard_done
 
 draw_A:
@@ -92,6 +95,11 @@ draw_F:
 draw_G:
     movia r4, chordG
     call drawscreen
+    br keyboard_done
+
+draw_P:
+    movia r4, goat
+    call drwscreen
 
 keyboard_done:
 
