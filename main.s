@@ -63,14 +63,16 @@ ISR:
     andi r17, r16, 0b010000000
     bne r17, r0, keyboard_int
 
-    br keyboard_done
-
+#br keyboard_done
 
 timer1_int:
     call timer1_subroutine
+    br ISR_done
+
 
 timer2_int:
     call timer2_subroutine
+    br ISR_done
 
 keyboard_int:
     call read_keyboard
@@ -206,8 +208,8 @@ timer1_subroutine:
     movia r8, TIMER1
     stwio r0, (r8)
 
-    addi et, et, 0x1 #enable interrupts (nested)
-    wrctl ctl0, et
+#addi et, et, 0x1 #enable interrupts (nested)
+#wrctl ctl0, et
 
 
     movia r8, LEGO
