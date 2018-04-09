@@ -56,7 +56,13 @@ ISR:
 
     rdctl r16, ipending
     andi r17, r16, 0b01
-    beq r17, r0,
+    bne r17, r0, timer1_int
+    andi r17, r16, 0b0100
+    bne r17, r0, timer2_int
+    andi r17, r16, 0b010000000
+    bne r17, r0, keyboard_int
+
+    br keyboard_done
 
 
 timer1_int:
@@ -77,6 +83,7 @@ keyboard_int:
     beq r8, r9, draw_G
     movia r9, MAKEP
     beq r8, r8, draw_P
+
     br keyboard_done
 
 draw_A:
