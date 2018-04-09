@@ -151,6 +151,12 @@ loop: br loop
 #will return byte value in r2
 #might return a boolean in r3? (indicating whether read was valid but should be unnecessary in interrupts).
 read_keyboard:
+
+#enable interrupts for timer 1.
+    addi r8, r8, 1
+    wrctl ctl3, r8
+    wrctl ctl0, r8
+
     movia r8, PS201
     ldwio r9, (r8)
     andi r10, r9, 0x08000
@@ -178,6 +184,13 @@ done_read_keyboard:
 # TIMER2 PWM SUBROUTINE #
 #warning: copied from strumming.s ISR section, may need to format as correct subroutine
 timer2_subroutine:
+
+#enable interrupts for timer 1 AND keyboard.
+    addi r8, r8, 0b010000001
+    wrctl ctl3, r8
+    movi r8, 1
+    wrctl ctl0, r8
+
     movia r8, TIMER2 #clear timeout bit
     stwio r0, (r8)
     movia r8, PWM_FLAG #check bit of PWM_FLAG
