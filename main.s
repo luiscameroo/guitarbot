@@ -118,14 +118,21 @@ ISR_done:
 
 .global _start
 _start:
-	movia sp, STACK
-	movia r4, goat
-	call drawscreen
-loop: br loop
-
 #=== initializations ===#
-
-
+	movia sp, STACK
+	
+	movui r8, 0b10000000
+	wrctl ctl3, r8
+	movui r8, 0b00000001
+	wrctl ctl0, r8
+	
+	movia r9, PS201
+	stwio r8, 4(r9)
+	
+	movia r4, default
+	call drawscreen
+#=== end main ===#
+loop: br loop
 
 #=== subroutines ===#
 
