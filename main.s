@@ -126,7 +126,7 @@ which_direction:
     movia r8, current_fret
     ldw r10, (r8)
     beq r10, r9, keyboard_done
-    bgt r10, r9, direction_reverse
+#bgt r10, r9, direction_reverse
 
 direction_forward:
     movia r8, direction
@@ -162,6 +162,8 @@ ISR_done:
 _start:
 #=== initializations ===#
 	movia sp, STACK
+
+    
 	
 	movui r8, 0b10000000
 	wrctl ctl3, r8
