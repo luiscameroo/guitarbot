@@ -40,6 +40,7 @@ byte3: .long 0x0
 
 current_fret: .long 0x01
 next_fret: .long 0x01
+direction: .long 0x01
 
 pwm_x_counter: .word 0x000000 #Ratio of Duty Cycle, if 0 then always on,
 pwm_y_counter: .word 0x000000 #if 1 then half the time, if 2 then third of the time
