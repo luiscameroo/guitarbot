@@ -3,6 +3,7 @@
 #=== EQU'S ===#
 .equ LEGO, 0xFF200060
 .equ LEGO_CONFIG, 0x07F557FF
+.equ LEGO_IRQ, 0x0800
 .equ TIMER1, 0xFF202000
 .equ TIMER2, 0xFF202020
 .equ STACK, 0x03FFFFFC
@@ -37,6 +38,8 @@ direction: .long 0x01
 .section .exceptions, "ax"
 ISR:
 
+
+
 #=== PROGRAM INSTRUCTIONS ===#
 .section .text
 
@@ -44,8 +47,23 @@ ISR:
 _start:
     movia sp, STACK
     movia r8, LEGO
+    movia r9, LEGO_CONFIG
+    stwio r9, 4(r8)
 
+    movia r9, 0xF83FFBFF #this might be super incorrect
+    stwio r9, (r8)
 
+    movia r9, 0xF85FFFFF
+    stwio r9, (r8)
+
+    movia r9, 0x08000000
+    stwio r9, 8(r8)
+
+    movia r8, LEGO_IRQ
+    wrctl ctl3, r8
+
+    movia r8, 1
+    wrctl ctl0, r8
 
 loop:
     br loop
