@@ -2,6 +2,7 @@
 
 #=== EQU'S ===#
 .equ LEGO, 0xFF200060
+.equ LEGO_CONFIG, 0x07F557FF
 .equ TIMER1, 0xFF202000
 .equ TIMER2, 0xFF202020
 .equ STACK, 0x03FFFFFC
@@ -22,6 +23,8 @@
 .equ MAKEG, 0x034
 .equ MAKEP, 0x04d
 
+.equ THRESHOLD, 0x08
+
 #=== DATA ===#
 .section .data
 .align 2
@@ -39,7 +42,10 @@ ISR:
 
 .global _start
 _start:
-    
+    movia sp, STACK
+    movia r8, LEGO
+
+
 
 loop:
     br loop
