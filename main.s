@@ -247,32 +247,49 @@ done_read_keyboard:
 #warning: copied from strumming.s ISR section, may need to format as correct subroutine
 timer2_subroutine:
 
-#enable interrupts for timer 1 AND keyboard.
-    addi r8, r8, 0b010000001
-    wrctl ctl3, r8
-    movi r8, 1
-    wrctl ctl0, r8
+    movia r8, LEGO
 
-    movia r8, TIMER2 #clear timeout bit
+    ldwio et, (r8)
+    andi et, et, 0b010000
+
+    beq r0, et, off
+
+on:
+    ldwio et, (r8)
+    andi et, et, 0xFFEF
+    stwio et, (r8)
+
+    movia r8, TIMER2
+
     stwio r0, (r8)
-    movia r8, PWM_FLAG #check bit of PWM_FLAG
-    beq r8, r0, low_done
+    movui et, %lo(PWM_ON)
+    stwio et, 8(r8)
 
-high_done:
-    stw r0, (r8) #set PWM_FLAG to 0 (indicating it is off after serviced).
-    movia r8, LEGO
-    ldwio et, (r8)
-    ori et, et, 0x0015 #(0000 0000 0001 0101), this example turns off motors 2 to 0.
-    stwio et, (r8)
-br timer2_done
+    movui et, %hi(PWM_ON)
+    stwio et, 12(r8)
 
-low_done:
-    addi et, et, 0x01 #set PWM_FLAG to 1 (indicating it will be on after serviced).
-    stw et, (r8)
-    movia r8, LEGO
+    movui et, 0b0101
+    stwio et, 4(r8)
+
+    br timer2_done
+
+off:
     ldwio et, (r8)
-    andi et, et, 0xFFEA # (1111 1111 1110 1010), this example turns on motors 2 to 0.
+    ori et, et, 0x0010
     stwio et, (r8)
+
+    movia r8, TIMER2
+
+    stwio r0, (r8)
+    movui et, %lo(PWM_OFF)
+    stwio et, 8(r8)
+
+    movui et, %hi(PWM_OFF)
+    stwio et, 12(r8)
+
+    movui et, 0b0101
+    stwio et, 4(r8)
+
 timer2_done:
     ret
 
