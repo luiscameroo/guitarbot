@@ -11,8 +11,8 @@
 #------ MOTOR TIMING ------#
 .equ X_PWM,  2000000
 .equ Y_PWM,  2000000
-.equ PWM_ON, 50000000
-.equ PWM_OFF, 50000000
+.equ PWM_ON, 30000
+.equ PWM_OFF, 70000
 
 #=== KEYBOARD EQU'S ===#
 .equ BREAK, 0x0f0
@@ -169,10 +169,10 @@ initialize_timer1:
     movia r8, TIMER1
 #load car_move_time into timer (2 seconds)
 #load low 16 bits
-    movui r9, %lo(car_move_time)
+    movui r9, %lo(strum_on)
     stwio r9, 8(r8)
 #load top 16 bits
-    movui r9, %hi(car_move_time)
+    movui r9, %hi(strum_on)
     stwio r9, 12(r8)
 #enable interrupts, turn on timer, run once until timeout bit
     movui r9, 0b111
