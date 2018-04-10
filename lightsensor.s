@@ -37,6 +37,21 @@ direction: .long 0x01
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
 ISR:
+    movia r8, LEGO
+    ldw r9, (r8)
+    andi r10, r9, 0b01
+    beq r10, r0, turn_off
+turn_on:
+    addi r10, r9, -1
+    stw r10, (r8)
+    br ISR_done
+turn_off:
+    addi r10, r9, 1
+    stw r10, (r8)
+ISR_done:
+    subi ea, ea, 4
+    eret
+
 
 
 
