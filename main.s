@@ -9,8 +9,6 @@
 .equ PS201, 0xFF200100
 
 #------ MOTOR TIMING ------#
-.equ X_MOVE,  2000000
-.equ Y_MOVE,  2000000
 .equ X_PWM,  2000000
 .equ Y_PWM,  2000000
 .equ PWM_ON, 50000000
@@ -42,6 +40,9 @@ byte3: .long 0x0
 current_fret: .long 0x01
 next_fret: .long 0x01
 direction: .long 0x01
+
+strum_on: .long 50000000
+strum_off: .long 50000000
 
 pwm_x_counter: .word 0x000000 #Ratio of Duty Cycle, if 0 then always on,
 pwm_y_counter: .word 0x000000 #if 1 then half the time, if 2 then third of the time
@@ -100,7 +101,7 @@ draw_A:
     movia r8, next_fret
     movi r9, 3
     stw r9, (r8)
-    br which_direction
+    br keyboard_done #which_direction
 
 draw_F:
     movia r4, chordF
@@ -108,7 +109,7 @@ draw_F:
     movia r8, next_fret
     movi r9, 1
     stw r9, (r8)
-    br which_direction
+    br keyboard_done #which_direction
 
 draw_G:
     movia r4, chordG
@@ -116,28 +117,28 @@ draw_G:
     movia r8, next_fret
     movi r9, 2
     stw r9, (r8)
-    br which_direction
+    br keyboard_done #which_direction
 
 draw_P:
     movia r4, goat
     call drawscreen
 
-which_direction:
-    movia r8, current_fret
-    ldw r10, (r8)
-    beq r10, r9, keyboard_done
+#which_direction:
+#   movia r8, current_fret
+#   ldw r10, (r8)
+#   beq r10, r9, keyboard_done
 #bgt r10, r9, direction_reverse
 
-direction_forward:
-    movia r8, direction
-    movi r9, 1
-    stw r9, (r8)
-    br keyboard_done
+#direction_forward:
+#   movia r8, direction
+#   movi r9, 1
+#   stw r9, (r8)
+#   br keyboard_done
 
-direction_reverse:
-    movia r8, direction
-    movi r9, -1
-    stw r9, (r8)
+#direction_reverse:
+#   movia r8, direction
+#   movi r9, -1
+#   stw r9, (r8)
 
 keyboard_done:
 
@@ -163,8 +164,12 @@ _start:
 #=== initializations ===#
 	movia sp, STACK
 
-    
-	
+#lego config below
+    movia r8, LEGO
+
+
+
+#ps2 config below
 	movui r8, 0b10000000
 	wrctl ctl3, r8
 	movui r8, 0b00000001
