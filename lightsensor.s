@@ -65,10 +65,11 @@ _start:
     movia r9, LEGO_CONFIG
     stwio r9, 4(r8)
 
-    movia r9, 0xF83FFBFF #this might be super incorrect
+# 1111 1000 0011 1111 1111 1011 1111 1111
+    movia r9, 0xFC3FFBFF #this might be super incorrect
     stwio r9, (r8)
 
-    movia r9, 0xF85FFFFF
+    movia r9, 0xFC5FFFFF
     stwio r9, (r8)
 
     movia r9, 0x08000000
