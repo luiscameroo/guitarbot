@@ -28,6 +28,7 @@
 
 current_fret: .long 0x01
 next_fret: .long 0x01
+direction: .long 0x01
 
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
@@ -38,3 +39,41 @@ ISR:
 
 .global _start
 _start:
+
+loop:
+    br loop
+
+#=== SUBROUTINES ===#
+
+#assuming keyboard would now have written to next_fret
+light_sensor_subroutine:
+    movia r8, current_fret
+    movia r9, direction
+    ldw r10, (r9)
+    bgt r9, r0, light_sensor_fwd
+
+light_sensor_rev:
+    ldw r10, (r8)
+    addi r10, r10, -1
+    movia r8, next_fret
+    ldw r11, (r8)
+    beq r11, r10, light_sensor_stop_motor
+    br light_sensor_done
+
+light_sensor_fwd:
+    ldw r10, (r8)
+    addi r10, r10, 1
+    movia r8, next_fret
+    ldw r11, (r8)
+    beq r11, r10, light_sensor_stop_motor
+    br light_sensor_done
+
+light_sensor_stop_motor:
+    movia r8, LEGO
+    ldw r9, (r8)
+    ori r9, r9, 0x010
+    stw r9, (r8)
+
+light_sensor_done:
+    ret
+
