@@ -9,11 +9,9 @@
 .equ PS201, 0xFF200100
 
 #------ MOTOR TIMING ------#
-.equ X_PWM,  2000000
-.equ Y_PWM,  2000000
-.equ PWM_ON, 30000
+.equ PWM_ON, 30000 #Duty Cycle of 0.3
 .equ PWM_OFF, 70000
-
+.equ strum_on, 50000000
 #=== KEYBOARD EQU'S ===#
 .equ BREAK, 0x0f0
 .equ MAKEA, 0x01c
@@ -25,7 +23,6 @@
 .section .data
 .align 1
 
-goat: .incbin "image/paul_de_raw.raw"
 default: .incbin "image/default.raw"
 chordA: .incbin "image/chordA.raw"
 chordF: .incbin "image/chordF.raw"
@@ -40,47 +37,54 @@ byte3: .long 0x0
 current_fret: .long 0x01
 next_fret: .long 0x01
 direction: .long 0x01
+going_up: .long 0x02
 
-strum_on: .long 50000000
+#strum_on: .long 50000000
 strum_off: .long 50000000
-
-pwm_x_counter: .word 0x000000 #Ratio of Duty Cycle, if 0 then always on,
-pwm_y_counter: .word 0x000000 #if 1 then half the time, if 2 then third of the time
 
 PWM_FLAG: .word 0x0 # reserve area in memory for checking whether power is on or off.
 
 #=== INTERRUPT SERVICE ROUTINE ===#
 .section .exceptions, "ax"
 ISR:
-    subi sp, sp, 28
-    stw r6, 24(sp)
-    stw r8, 20(sp)
-    stw r9, 16(sp)
+    subi sp, sp, 40
+    stw r6, (sp)
+    stw r8, 4(sp)
+    stw r9, 8(sp)
     stw r10, 12(sp)
-    stw r11, 8(sp)
-    stw r12, 4(sp)
-    stw ra, (sp)
+    stw r11, 16(sp)
+    stw r12, 20(sp)
+	stw et, 24(sp)
+    stw ra, 28(sp)
+	rdctl et, estatus
+	stw et, 32(sp)
+	stw ea, 36(sp)
+	
 
     rdctl r16, ipending
-    andi r17, r16, 0b01
+    andi r17, r16, 0x0001
     bne r17, r0, timer1_int
-    andi r17, r16, 0b0100
-    bne r17, r0, timer2_int
-    andi r17, r16, 0b010000000
+	
+	andi r17, r16, 0x0080
     bne r17, r0, keyboard_int
+	
+	andi r17, r16, 0x0800
+	bne r17, r0, sensor_int
+	
+    andi r17, r16, 0x0004
+    bne r17, r0, timer2_int
 
-#br keyboard_done
+	br ISR_done
 
 timer1_int:
     call timer1_subroutine
     br ISR_done
 
-
-timer2_int:
-    call timer2_subroutine
-    br ISR_done
-
 keyboard_int:
+	movui r9, 0x01
+	wrctl ctl3, r9
+	wrctl ctl0, r9
+	
     call read_keyboard
     movia et, byte3
     ldw r8, (et)
@@ -101,6 +105,11 @@ draw_A:
     movia r8, next_fret
     movi r9, 3
     stw r9, (r8)
+
+	#Move chord press up
+	movia r8, LEGO
+	movia r9, 0xFFFFFFFB
+	stwio r9, (r8)
     br keyboard_done #which_direction
 
 draw_F:
@@ -109,6 +118,11 @@ draw_F:
     movia r8, next_fret
     movi r9, 1
     stw r9, (r8)
+	
+	#Move chord press up
+	movia r8, LEGO
+	movia r9, 0xFFFFFFFB
+	stwio r9, (r8)
     br keyboard_done #which_direction
 
 draw_G:
@@ -117,41 +131,47 @@ draw_G:
     movia r8, next_fret
     movi r9, 2
     stw r9, (r8)
+	
+	#Move chord press up
+	movia r8, LEGO
+	movia r9, 0xFFFFFFFB
+	stwio r9, (r8)
     br keyboard_done #which_direction
 
 draw_P:
-    movia r4, goat
+    movia r4, default
     call drawscreen
+	br keyboard_done
 
-#which_direction:
-#   movia r8, current_fret
-#   ldw r10, (r8)
-#   beq r10, r9, keyboard_done
-#bgt r10, r9, direction_reverse
+sensor_int: 
+	call SENSOR_IRQ
+	br ISR_done
+	
+timer2_int:
+    call timer2_subroutine
+    br ISR_done
 
-#direction_forward:
-#   movia r8, direction
-#   movi r9, 1
-#   stw r9, (r8)
-#   br keyboard_done
-
-#direction_reverse:
-#   movia r8, direction
-#   movi r9, -1
-#   stw r9, (r8)
 
 keyboard_done:
 
 ISR_done:
-    ldw r6, 24(sp)
-    ldw r8, 20(sp)
-    ldw r9, 16(sp)
-    ldw r10, 12(sp)
-    ldw r11, 8(sp)
-    ldw r12, 4(sp)
-    ldw ra, (sp)
+	wrctl ctl0, r0
+	movui r9, 0b100010000101
+	wrctl ctl3, r9
 
-    addi sp, sp, 28
+	ldw ea, 36(sp)
+	ldw et, 32(sp)
+	wrctl status, et
+	ldw ra, 28(sp)
+	ldw et, 24(sp)
+	ldw r12, 20(sp)
+	ldw r11, 16(sp)
+	ldw r10, 12(sp)
+	ldw r9, 8(sp)
+	ldw r8, 4(sp)
+	ldw r6, 0(sp)
+	
+    addi sp, sp, 40
 
     subi ea, ea, 4
     eret
@@ -191,12 +211,42 @@ initialize_timer2:
     movui r9, 0b0101
     stwio r9, 4(r8)
 
+#intialize LEGO
+	movia r8, LEGO
 
+#initialize SENSORS
+    movia r9, 0x07F557FF
+    stwio r9, 4(r8)
+	
+	movia r9, 0xFFFFFFFF
+	stwio r9, 12(r8)
+	
+#threshold value of sensor
+	movia r9, 0xFFBFEFFF #sensor1
+	stwio r9, (r8)
+	
+	movia r9, 0xFFDFFFFF
+	stwio r9, (r8)
+	
+	movia r9, 0xFFBFBFFF #sensor2
+	stwio r9, (r8)
+	
+	movia r9, 0xFFDFFFFF
+	stwio r9, (r8)
+	
+	movia r9, 0xF8000000
+	stwio r9, 8(r8)
+	
+initialize_motor0:
+#turn motor0 on (motor1 left off)
+    movia r9, 0xFFDFFFFC
+	stwio r9, (r8)
+	
 
 #ps2 config below
-    movui r8, 0b10000000 #0b10000101
+    movui r8, 0x0885 
 	wrctl ctl3, r8
-	movui r8, 0b00000001
+	movui r8, 0b01
 	wrctl ctl0, r8
 	
 	movia r9, PS201
@@ -246,17 +296,22 @@ done_read_keyboard:
 # TIMER2 PWM SUBROUTINE #
 #warning: copied from strumming.s ISR section, may need to format as correct subroutine
 timer2_subroutine:
-
+	movui r9, 0x881
+	wrctl ctl3, r9
+	
+	movui r9, 0x01
+	wrctl ctl0, r9
+	
     movia r8, LEGO
 
     ldwio et, (r8)
-    andi et, et, 0b010000
+    andi et, et, 0b01
 
     beq r0, et, off
 
 on:
     ldwio et, (r8)
-    andi et, et, 0xFFEF
+    andi et, et, 0xFFFE
     stwio et, (r8)
 
     movia r8, TIMER2
@@ -275,7 +330,7 @@ on:
 
 off:
     ldwio et, (r8)
-    ori et, et, 0x0010
+    ori et, et, 0x0001
     stwio et, (r8)
 
     movia r8, TIMER2
@@ -355,3 +410,60 @@ light_sensor_stop_motor:
 
 light_sensor_done:
     ret
+
+# TOUCH SENSOR SUBROUTINE #
+SENSOR_IRQ:
+	movui et, 0x801
+	wrctl ctl3, et
+	
+	movui et, 0x01
+	wrctl ctl0, et
+	
+	movia r8, LEGO
+	ldwio et, (r8)
+	
+	#Check which sensor caused interrupt
+	movia r9, 0x10000000
+	and r9, r9, et
+	bne r0, r9, SENSOR_DOWN
+
+	movia r9, 0x20000000
+	and r9, r9, et
+	bne r0, r9, SENSOR_UP
+	
+	br SENSOR_DONE
+	
+SENSOR_DOWN:
+	#Set correct value of going_up
+	movia r8, going_up
+	ldw r9, (r8)
+	bne r0, r9, SENSOR_DONE
+	
+	movui r9, 0x01
+	stw r9, (r8)
+
+	#Turn off motor 
+	movia r8, LEGO
+	movui r9, 0x04
+	ldwio et, (r8)
+	and et, r9, et
+	stwio et, (r8)
+	
+	br SENSOR_DONE
+	
+SENSOR_UP:
+	#Set correct value of going_up
+	movia r8, going_up
+	ldw r9, (r8)
+	beq r0, r9, SENSOR_DONE
+	
+	stw r0, (r8)
+	
+	#Turn off motor
+	movia r8, LEGO
+	movui r9, 0x04
+	ldwio et, (r8)
+	and et, r9, et
+	stwio et, (r8)
+	
+SENSOR_DONE: ret	
