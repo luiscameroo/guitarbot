@@ -164,13 +164,37 @@ _start:
 #=== initializations ===#
 	movia sp, STACK
 
-#lego config below
-    movia r8, LEGO
+#timer config below
+initialize_timer1:
+    movia r8, TIMER1
+#load car_move_time into timer (2 seconds)
+#load low 16 bits
+    movui r9, %lo(car_move_time)
+    stwio r9, 8(r8)
+#load top 16 bits
+    movui r9, %hi(car_move_time)
+    stwio r9, 12(r8)
+#enable interrupts, turn on timer, run once until timeout bit
+    movui r9, 0b111
+    stwio r9, 4(r8)
+
+initialize_timer2:
+    movia r8, TIMER2
+    movui r9, %lo(PWM_ON)
+    stwio r9, 8(r8)
+
+    movui r9, %hi(PWM_ON)
+    stwio r9, 12(r8)
+
+    stwio r0, (r8)
+
+    movui r9, 0b0101
+    stwio r9, 4(r8)
 
 
 
 #ps2 config below
-	movui r8, 0b10000000
+    movui r8, 0b10000000 #0b10000101
 	wrctl ctl3, r8
 	movui r8, 0b00000001
 	wrctl ctl0, r8
