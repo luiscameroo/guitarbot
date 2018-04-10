@@ -97,21 +97,47 @@ keyboard_int:
 draw_A:
     movia r4, chordA
     call drawscreen
-    br keyboard_done
+    movia r8, next_fret
+    movi r9, 3
+    stw r9, (r8)
+    br which_direction
 
 draw_F:
     movia r4, chordF
     call drawscreen
-    br keyboard_done
+    movia r8, next_fret
+    movi r9, 1
+    stw r9, (r8)
+    br which_direction
 
 draw_G:
     movia r4, chordG
     call drawscreen
-    br keyboard_done
+    movia r8, next_fret
+    movi r9, 2
+    stw r9, (r8)
+    br which_direction
 
 draw_P:
     movia r4, goat
     call drawscreen
+
+which_direction:
+    movia r8, current_fret
+    ldw r10, (r8)
+    beq r10, r9, keyboard_done
+    bgt r10, r9, direction_reverse
+
+direction_forward:
+    movia r8, direction
+    movi r9, 1
+    stw r9, (r8)
+    br keyboard_done
+
+direction_reverse:
+    movia r8, direction
+    movi r9, -1
+    stw r9, (r8)
 
 keyboard_done:
 
