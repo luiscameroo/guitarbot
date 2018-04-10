@@ -227,7 +227,6 @@ timer1_subroutine:
 #addi et, et, 0x1 #enable interrupts (nested)
 #wrctl ctl0, et
 
-
     movia r8, LEGO
     ldwio et, (r8)
     andi et, et, 0b010
@@ -248,4 +247,6 @@ timer1_done:
     ret
 
 # VGA SUBROUTINE #
+
+# LIGHT SENSOR SUBROUTINE #
 
